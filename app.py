@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import requests
+import json
 
 CURR_USER_KEY = "curr_user"
 
@@ -15,7 +16,15 @@ def index():
 def admin():
     """ Admin view lists all users """
 
-    return render_template('/admin.html')
+    try:
+        # get from api
+        r = requests.get("http://localhost:3000/users")
+        data = json.loads(r.text)
+        return render_template('/admin.html', data=data)
+    except:
+        # error page
+        return render_template("/error.html")
+
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -24,11 +33,11 @@ def signup():
     if request.method == "POST":
         try:
             # post to api
-            r = requests.post("http://localhost:3000/users")
-            return redirect('/')
+            requests.post("http://localhost:3000/users", data=request.form)
+            return redirect('/admin')
         except:
             # error page
-            return redirect('/signup')
+            return render_template("/error.html")
     
     else:
         return render_template('/signup.html')
