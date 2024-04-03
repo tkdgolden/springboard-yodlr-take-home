@@ -1,10 +1,13 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 import requests
 import json
+from forms import AddUserForm
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = "secret"
 
 @app.route('/')
 def index():
@@ -30,14 +33,17 @@ def admin():
 def signup():
     """ Signup form to create new user """
 
-    if request.method == "POST":
+    form = AddUserForm()
+
+    if form.validate_on_submit():
         try:
             # post to api
-            requests.post("http://localhost:3000/users", data=request.form)
+            requests.post("http://localhost:3000/users", data=form.data)
+            flash(f"Added {form.data}")
             return redirect('/admin')
         except:
             # error page
             return render_template("/error.html")
     
     else:
-        return render_template('/signup.html')
+        return render_template('/signup.html', form=form)

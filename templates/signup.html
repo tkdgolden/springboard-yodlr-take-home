@@ -2,11 +2,24 @@
 {% block title %}Yodlr Registration Portal{% endblock %}
 {% block body %}
   <h1>Yodlr Registration Portal</h1>
-  <form action="/signup" method="post" >
-    <label for="firstName">First Name: </label><input type="text" name="firstName" required></br>
-    <label for="lastName">Last Name: </label><input type="text" name="lastName" required></br>
-    <label for="email">Email: </label><input type="email" name="email" required></br>
-    <button type="submit" formenctype="application/json">Submit</button>
+  <form id="snack-add-form" method="POST">
+    {{ form.hidden_tag() }}
+  
+    {% for field in form
+           if field.widget.input_type != 'hidden' %}
+  
+      <p>
+        {{ field.label }}
+        {{ field }}
+  
+        {% for error in field.errors %}
+          {{ error }}
+        {% endfor %}
+      </p>
+  
+    {% endfor %}
+  
+    <button type="submit">Submit</button>
   </form>
   <p>
     <a href="/admin">Admin Page</a>
