@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Yodlr User Edit{% endblock %}
+{% block body %}
+  <h1>{{ user.firstName }} {{ user.lastName }}</h1>
+  <form id="snack-add-form" method="POST">
+    {{ form.hidden_tag() }}
+  
+    {% for field in form
+           if field.widget.input_type != 'hidden' %}
+  
+      <p>
+        {{ field.label }}
+        {{ field }}
+  
+        {% for error in field.errors %}
+          {{ error }}
+        {% endfor %}
+      </p>
+  
+    {% endfor %}
+  
+    <button type="submit">Save Changes</button>
+    <button><a href="/users/{{ user.id }}/delete">Delete</a></button>
+  </form>
+  <p>
+    <a href="/admin">Admin Page</a>
+  </p>
+{% endblock %}
