@@ -8,6 +8,7 @@ class AddUserForm(FlaskForm):
     firstName = StringField("First Name: ", validators=[InputRequired()])
     lastName = StringField("Last Name: ", validators=[InputRequired()])
     email = EmailField("Email: ", validators=[InputRequired()])
+    password = PasswordField("Password: ", validators=[InputRequired()])
 
 class EditUserForm(FlaskForm):
     """ Form for editing users. """

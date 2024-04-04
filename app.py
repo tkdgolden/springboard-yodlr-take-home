@@ -57,9 +57,9 @@ def view_user(user_id):
         user = json.loads(r.text)
     except:
         return render_template("/error.html")
-
+    
     form = EditUserForm()
-
+    
     if form.validate_on_submit():
         try:
             # post to api
