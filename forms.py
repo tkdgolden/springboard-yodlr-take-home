@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, HiddenField, SelectField
+from wtforms import StringField, EmailField, HiddenField, SelectField, PasswordField
 from wtforms.validators import InputRequired
 
 class AddUserForm(FlaskForm):
@@ -18,3 +18,9 @@ class EditUserForm(FlaskForm):
     email = EmailField("Email: ", validators=[InputRequired()])
     id = HiddenField()
     state = SelectField("Status: ", choices=[('active', "Active"), ("pending", "pending")])
+
+class LoginForm(FlaskForm):
+    """ Form for logging in users. """
+
+    email = EmailField("Email: ", validators=[InputRequired()])
+    password = PasswordField("Password: ", validators=[InputRequired()])

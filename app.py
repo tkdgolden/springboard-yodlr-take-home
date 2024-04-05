@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, redirect, flash
 import requests
 import json
 from forms import AddUserForm, EditUserForm
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 CURR_USER_KEY = "curr_user"
 
@@ -37,8 +40,11 @@ def signup():
 
     if form.validate_on_submit():
         try:
+            # hash password
+            hashed = bcrypt.generate_password_hash(form.data['password'])
+            user_data = {**form.data, 'password': hashed}
             # post to api
-            requests.post("http://localhost:3000/users", data=form.data)
+            requests.post("http://localhost:3000/users", data=user_data)
             flash(f"Added {form.data}")
             return redirect('/admin')
         except:
@@ -59,7 +65,7 @@ def view_user(user_id):
         return render_template("/error.html")
     
     form = EditUserForm()
-    
+
     if form.validate_on_submit():
         try:
             # post to api

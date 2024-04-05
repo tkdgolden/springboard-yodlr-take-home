@@ -6,6 +6,7 @@ var log = logger();
 
 var users = require('../init_data.json').data;
 var curId = _.size(users);
+const userFields = ["id", "email", "firstName", "lastName", "state", "password"]
 
 /* GET users listing. */
 router.get('/', function(req, res) {
@@ -15,6 +16,11 @@ router.get('/', function(req, res) {
 /* Create a new user */
 router.post('/', function(req, res) {
   var user = req.body;
+  for (let key of Object.keys(user)) {
+    if (!userFields.includes(key)) {
+      delete user[key];
+    }
+  }
   curId +=1;
   user.id = curId;
   if (!user.state) {
@@ -46,6 +52,11 @@ router.delete('/:id', function(req, res) {
 /* Update a user by id */
 router.put('/:id', function(req, res, next) {
   var user = req.body;
+  for (let key of Object.keys(user)) {
+    if (!userFields.includes(key)) {
+      delete user[key];
+    }
+  }
   if (user.id != req.params.id) {
     return next(new Error('ID paramter does not match body'));
   }
