@@ -31,7 +31,7 @@ class AdminViews(TestCase):
             self.assertIn('<td>Kyle</td>', html)
 
 class SignupViews(TestCase):
-    """ Tests for views for admin page. """
+    """ Tests for views for signup page. """
 
     def test_signup_form(self):
         with app.test_client() as client:
@@ -142,3 +142,50 @@ class UserViews(TestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertNotIn('<td>Fred</td>', html)
+
+class LoginViews(TestCase):
+    """ Tests for views for login. """
+
+    def test_login_form(self):
+        with app.test_client() as client:
+            resp = client.get("/login")
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<label for="id">Id: </label>', html)
+
+    def test_submit_login_form(self):
+        with app.test_client() as client:
+            resp = client.post("/login", data={'id': 1, 'password': 'test'})
+
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.location, "/admin")
+
+    def test_submit_login_form_redirect(self):
+        with app.test_client() as client:
+            resp = client.post("/login", data={'id': 1, 'password': 'test'}, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<td>Kyle</td>', html)
+
+    def test_login_form_validation(self):
+        with app.test_client() as client:
+            resp = client.post("/login", data={'id': 19, 'password': 'test'}, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertIn('<h1>Error</h1>', html)
+
+
+class LoginViews(TestCase):
+    """ Tests for views for login. """
+
+    def test_login_form(self):
+        with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
+            resp = client.get("/logout", follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Yodlr Design Challenge</h1>', html)
