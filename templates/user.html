@@ -2,7 +2,7 @@
 {% block title %}Yodlr User Edit{% endblock %}
 {% block body %}
   <h1>{{ user.firstName }} {{ user.lastName }}</h1>
-  <form id="snack-add-form" method="POST">
+  <form method="POST">
     {{ form.hidden_tag() }}
   
     {% for field in form

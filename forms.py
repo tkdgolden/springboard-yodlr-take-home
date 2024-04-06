@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, HiddenField, SelectField, PasswordField
+from wtforms import StringField, EmailField, HiddenField, SelectField, PasswordField, IntegerField
 from wtforms.validators import InputRequired
 
 class AddUserForm(FlaskForm):
@@ -22,5 +22,5 @@ class EditUserForm(FlaskForm):
 class LoginForm(FlaskForm):
     """ Form for logging in users. """
 
-    email = EmailField("Email: ", validators=[InputRequired()])
+    id = IntegerField("Id: ", validators=[InputRequired()])
     password = PasswordField("Password: ", validators=[InputRequired()])
