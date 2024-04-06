@@ -30,8 +30,6 @@ def check_password(form_data):
 def check_logged_in():
     """ if a correct user id not saved on session, redirect to index """
 
-    print(session)
-
     if ('user' in session.keys()):
         try:
             api.get_user(session['user'])

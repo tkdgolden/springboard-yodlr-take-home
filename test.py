@@ -22,6 +22,8 @@ class AdminViews(TestCase):
 
     def test_admin(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             resp = client.get("/admin")
             html = resp.get_data(as_text=True)
 
@@ -41,21 +43,31 @@ class SignupViews(TestCase):
 
     def test_submit_signup_form(self):
         with app.test_client() as client:
-            resp = client.post("/signup", data={'firstName': 'Sam', 'lastName': 'Stewart', 'email': 'test@gmail.com'})
+            resp = client.post("/signup", data={'firstName': 'Sam', 'lastName': 'Stewart', 'email': 'test@gmail.com', 'password': 'test'})
 
             self.assertEqual(resp.status_code, 302)
-            self.assertEqual(resp.location, "/admin")
+            self.assertEqual(resp.location, "/login")
 
     def test_submit_signup_form_redirect(self):
         with app.test_client() as client:
-            resp = client.post("/signup", data={'firstName': 'Sam', 'lastName': 'Stewart', 'email': 'test@gmail.com'}, follow_redirects=True)
+            resp = client.post("/signup", data={'firstName': 'Richard', 'lastName': 'Stewart', 'email': 'test@gmail.com', 'password': 'test'}, follow_redirects=True)
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<td>Sam</td>', html)
+            self.assertIn('<h1>Yodlr Login Portal</h1>', html)
+
+            with client.session_transaction() as sess:
+                sess['user'] = 1
+            resp = client.get("/admin")
+            html = resp.get_data(as_text=True)
+
+            self.assertIn('<td>Richard</td>', html)
+
 
     def test_signup_form_validation(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             client.post("/signup", data={'firstName': 'NoEmail', 'lastName': 'Stewart'})
             resp = client.get("/admin")
             html = resp.get_data(as_text=True)
@@ -79,6 +91,8 @@ class UserViews(TestCase):
 
     def test_user_view(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             resp = client.get("/users/3")
             html = resp.get_data(as_text=True)
 
@@ -87,6 +101,8 @@ class UserViews(TestCase):
 
     def test_submit_edit_form(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             resp = client.post("/users/2", data={'firstName': 'Random', 'lastName': 'Blah', 'email': 'timbuctu@gmail.com', 'state': 'pending', 'id': 2})
 
             self.assertEqual(resp.status_code, 302)
@@ -94,6 +110,8 @@ class UserViews(TestCase):
 
     def test_submit_edit_form_redirect(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             resp = client.post("/users/1", data={'firstName': 'Daniel', 'lastName': 'Barnes', 'email': 'edittest@gmail.com', 'state': 'pending', 'id': 1}, follow_redirects=True)
             html = resp.get_data(as_text=True)
 
@@ -108,6 +126,8 @@ class UserViews(TestCase):
 
     def test_delete_user(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             resp = client.get("/users/4/delete")
 
             self.assertEqual(resp.status_code, 302)
@@ -115,6 +135,8 @@ class UserViews(TestCase):
 
     def test_delete_redirect(self):
         with app.test_client() as client:
+            with client.session_transaction() as sess:
+                sess['user'] = 1
             resp = client.get("/users/4/delete", follow_redirects=True)
             html = resp.get_data(as_text=True)
 
